@@ -33,6 +33,13 @@
                         </div>
                     @endif
 
+                    @if (session('error'))
+                        <div
+                            class="mb-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 rounded-lg text-sm">
+                            {{ session('error') }}
+                        </div>
+                    @endif
+
                     {{-- Table --}}
                     <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
                         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
