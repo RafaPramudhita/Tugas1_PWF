@@ -10,6 +10,7 @@ class ProductPolicy
 {
     /**
      * Determine whether the user can view any models.
+     * Modul 5: Terbuka untuk semua user terautentikasi.
      */
     public function viewAny(User $user): bool
     {
@@ -18,6 +19,7 @@ class ProductPolicy
 
     /**
      * Determine whether the user can view the model.
+     * Modul 5: Terbuka untuk semua user terautentikasi.
      */
     public function view(User $user, Product $product): bool
     {
@@ -26,28 +28,29 @@ class ProductPolicy
 
     /**
      * Determine whether the user can create models.
+     * Modul 5: Terbuka untuk semua user terautentikasi.
      */
     public function create(User $user): bool
     {
-        return $user->role === 'admin';
+        return true;
     }
 
     /**
      * Determine whether the user can update the model.
-     * Hanya admin DAN pemilik data yang bisa mengupdate.
+     * Modul 5: HANYA admin ATAU pemilik data (user_id cocok) yang bisa mengupdate.
      */
     public function update(User $user, Product $product): bool
     {
-        return $user->role === 'admin' && $user->id === $product->user_id;
+        return $user->role === 'admin' || $user->id === $product->user_id;
     }
 
     /**
      * Determine whether the user can delete the model.
-     * Hanya admin DAN pemilik data yang bisa menghapus.
+     * Modul 5: HANYA admin ATAU pemilik data (user_id cocok) yang bisa menghapus.
      */
     public function delete(User $user, Product $product): bool
     {
-        return $user->role === 'admin' && $user->id === $product->user_id;
+        return $user->role === 'admin' || $user->id === $product->user_id;
     }
 
     /**

@@ -13,16 +13,16 @@
                     <div class="flex items-center justify-between mb-6">
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Manage your product inventory</h3>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                            </svg>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">View and manage all products</p>
                         </div>
-                        <a href="{{ route('product.create') }}"
-                            class="text-sm font-bold text-gray-800 dark:text-gray-200 tracking-light">Add Product</a>
-                        <p class="text-sm text-gray-600 dark:text-gray-400">Fill in the details to add a new
-                            product</p>
+                        <a href="{{ route('products.create') }}"
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg shadow-sm transition">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Add Product
+                        </a>
                     </div>
 
                     {{-- Flash message --}}
@@ -81,7 +81,7 @@
                                                     <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
                                                         {{ $product->name }}</p>
                                                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                                                        By {{ $product->user->name ?? 'Unknown' }}</p>
+                                                        {{ Str::limit($product->description, 40) }}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -101,8 +101,9 @@
                                         <td class="px-6 py-4">
                                             <div class="flex items-center justify-center gap-2">
                                                 {{-- View --}}
-                                                <a href="{{ route('product.show', $product->id) }}"
-                                                    class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition">
+                                                <a href="{{ route('products.show', $product) }}"
+                                                    class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition"
+                                                    title="View">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-4"
                                                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                                         stroke-width="2">
@@ -113,10 +114,11 @@
                                                     </svg>
                                                 </a>
 
-                                                {{-- Edit --}}
+                                                {{-- Edit (hanya muncul jika user punya akses via Policy) --}}
                                                 @can('update', $product)
-                                                <a href="{{ route('product.edit', $product) }}"
-                                                    class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition">
+                                                <a href="{{ route('products.edit', $product) }}"
+                                                    class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/30 transition"
+                                                    title="Edit">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-4"
                                                         fill="none" viewBox="0 0 24 24" stroke="currentColor"
                                                         stroke-width="2">
@@ -126,15 +128,16 @@
                                                 </a>
                                                 @endcan
 
-                                                {{-- Delete --}}
+                                                {{-- Delete (tombol hapus dalam <form> dengan @csrf & @method('DELETE')) --}}
                                                 @can('delete', $product)
-                                                <form action="{{ route('product.delete', $product) }}"
+                                                <form action="{{ route('products.destroy', $product) }}"
                                                     method="POST"
-                                                    onsubmit="return confirm('Delete this product?')">
+                                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?')">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="submit"
-                                                        class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition">
+                                                        class="p-1.5 rounded-md text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 transition"
+                                                        title="Delete">
                                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-4"
                                                             fill="none" viewBox="0 0 24 24"
                                                             stroke="currentColor" stroke-width="2">
@@ -181,4 +184,5 @@
             </div>
         </div>
     </div>
+
 </x-app-layout>
