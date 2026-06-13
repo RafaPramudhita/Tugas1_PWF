@@ -54,4 +54,12 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    /**
+     * Relasi: User hasMany Product (Modul 3)
+     */
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }

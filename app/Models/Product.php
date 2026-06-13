@@ -18,4 +18,12 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Relasi: Product hasMany Kategori (Modul 3)
+     */
+    public function kategoris()
+    {
+        return $this->hasMany(Kategori::class);
+    }
 }

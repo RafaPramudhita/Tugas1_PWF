@@ -22,8 +22,14 @@ Route::middleware('auth')->group(function () {
 });
 
 // Modul 4: Route::resource untuk CRUD produk, dilindungi middleware 'auth'
+// Modul 5: Route export dilindungi Gate 'export-product' (hanya admin)
 // Otorisasi granular (update/delete) ditangani oleh ProductPolicy (Modul 5)
 Route::middleware('auth')->group(function () {
+    // Route export harus sebelum resource agar tidak tertangkap oleh products/{product}
+    Route::get('products/export', [ProductController::class, 'export'])
+        ->middleware('can:export-product')
+        ->name('products.export');
+
     Route::resource('products', ProductController::class);
 });
 

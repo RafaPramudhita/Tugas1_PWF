@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\QueryException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductController extends Controller
 {
@@ -195,5 +196,42 @@ class ProductController extends Controller
         return redirect()
             ->route('products.index')
             ->with('success', 'Produk berhasil dihapus.');
+    }
+
+    /**
+     * Export all products as CSV.
+     * Modul 5: Fitur export, dilindungi Gate 'export-product' (hanya admin).
+     */
+    public function export(): StreamedResponse
+    {
+        $products = Product::with('user')->latest()->get();
+
+        $fileName = 'products_export_' . date('Y-m-d_His') . '.csv';
+
+        $response = new StreamedResponse(function () use ($products) {
+            $handle = fopen('php://output', 'w');
+
+            // Header CSV
+            fputcsv($handle, ['No', 'Nama Produk', 'Deskripsi', 'Quantity', 'Harga', 'Pemilik', 'Dibuat']);
+
+            foreach ($products as $index => $product) {
+                fputcsv($handle, [
+                    $index + 1,
+                    $product->name,
+                    $product->description ?? '-',
+                    $product->quantity,
+                    $product->price,
+                    $product->user->name ?? 'N/A',
+                    $product->created_at->format('d/m/Y H:i'),
+                ]);
+            }
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', 'attachment; filename="' . $fileName . '"');
+
+        return $response;
     }
 }
