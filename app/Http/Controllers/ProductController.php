@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -18,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::with('user')->latest()->get();
+        $products = Product::with(['user', 'category'])->latest()->get();
 
         return view('product.index', compact('products'));
     }
@@ -30,8 +31,9 @@ class ProductController extends Controller
     public function create()
     {
         $users = User::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
 
-        return view('product.create', compact('users'));
+        return view('product.create', compact('users', 'categories'));
     }
 
     /**
@@ -47,6 +49,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
             'quantity'    => 'required|integer|min:0',
+            'category_id' => 'required|exists:category,id',
         ], [
             'name.required'        => 'Nama produk wajib diisi.',
             'name.string'          => 'Nama produk harus berupa teks.',
@@ -62,6 +65,9 @@ class ProductController extends Controller
             'quantity.required'    => 'Stok produk wajib diisi.',
             'quantity.integer'     => 'Stok produk harus berupa angka bulat.',
             'quantity.min'         => 'Stok produk tidak boleh kurang dari 0.',
+
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'category_id.exists'   => 'Kategori yang dipilih tidak valid.',
         ]);
 
         // Set user_id otomatis dari user yang sedang login
@@ -100,7 +106,7 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        $product->load('user');
+        $product->load(['user', 'category']);
 
         return view('product.show', compact('product'));
     }
@@ -116,8 +122,9 @@ class ProductController extends Controller
         $this->authorize('update', $product);
 
         $users = User::orderBy('name')->get();
+        $categories = Category::orderBy('name')->get();
 
-        return view('product.edit', compact('product', 'users'));
+        return view('product.edit', compact('product', 'users', 'categories'));
     }
 
     /**
@@ -137,6 +144,7 @@ class ProductController extends Controller
             'description' => 'required|string',
             'price'       => 'required|numeric|min:0',
             'quantity'    => 'required|integer|min:0',
+            'category_id' => 'required|exists:category,id',
         ], [
             'name.required'        => 'Nama produk wajib diisi.',
             'name.string'          => 'Nama produk harus berupa teks.',
@@ -152,6 +160,9 @@ class ProductController extends Controller
             'quantity.required'    => 'Stok produk wajib diisi.',
             'quantity.integer'     => 'Stok produk harus berupa angka bulat.',
             'quantity.min'         => 'Stok produk tidak boleh kurang dari 0.',
+
+            'category_id.required' => 'Kategori wajib dipilih.',
+            'category_id.exists'   => 'Kategori yang dipilih tidak valid.',
         ]);
 
         try {

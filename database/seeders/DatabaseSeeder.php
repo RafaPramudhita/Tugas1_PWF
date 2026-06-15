@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -28,5 +29,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'test@example.com',
             'role' => 'user',
         ]);
+
+        // UCP 1: Seeder default category untuk testing
+        $categories = ['Elektronik', 'Perangkat Keras', 'Aksesoris'];
+        foreach ($categories as $name) {
+            Category::create(['name' => $name]);
+        }
     }
 }
